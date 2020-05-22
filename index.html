@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CSS Grid playground</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    .main {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .grid {
+      width: 400px;
+      height: 400px;
+      display: grid;
+      border: 1px solid blue;
+    }
+
+    .styles-wrapper {
+      display: flex;
+      justify-content: space-around;
+      width: 80%;
+    }
+
+    .item {
+      background: green;
+      border: 1px solid black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+<main class="main">
+  <div class="styles-wrapper">
+    <form id="form">
+      <label for="selector">Selector</label>
+      <br>
+      <input id="selector" type="text" value="#item_1">
+      <br>
+      <button type="submit">Select</button>
+    </form>
+    <br>
+    <div>
+      <label for="gridItemCode">Item code</label>
+      <br>
+      <textarea id="gridItemCode" rows="20" cols="70"></textarea>
+      <div>
+        <button id="itemPrev">Prev</button>
+        <button id="itemNext">Next</button>
+      </div>
+    </div>
+    <div>
+      <label for="gridTemplateCode">Grid template code</label>
+      <br>
+      <textarea id="gridTemplateCode" rows="20" cols="70">
+        grid-template-columns: repeat(3, 20%) 10px 1fr;
+        grid-template-rows: repeat(3, 20%);
+        grid-auto-rows: 15px;
+      </textarea>
+      <div>
+        <button id="gridPrev">Prev</button>
+        <button id="gridNext">Next</button>
+      </div>
+    </div>
+  </div>
+  <div>
+    <label for="numberOfItems">Number of items</label>
+    <br>
+    <input id="numberOfItems" type="number" value="16" />
+  </div>
+  <div class="grid"></div>
+</main>
+<script>
+  const grid = document.querySelector('.grid');
+  const gridStyles = [document.querySelector('#gridTemplateCode').value];
+  let gridCurrent = 0;
+  const itemStyles = [];
+  let itemCurrent = 0;
+
+  const numberOfItems = document.querySelector('#numberOfItems');
+  numberOfItems.addEventListener('change', () => {
+    grid.innerHTML = Array(Number(numberOfItems.value)).fill(null).map((_, i) => `<p class="item" id="item_${i + 1}">${i + 1}</p>`).join(' ')
+  });
+
+  grid.innerHTML = Array(Number(numberOfItems.value)).fill(null).map((_, i) => `<p class="item" id="item_${i + 1}">${i + 1}</p>`).join(' ')
+  const templateCode = document.querySelector('#gridTemplateCode');
+
+  document.querySelector('.grid').style = document.querySelector('#gridTemplateCode').value;
+  templateCode.addEventListener('change', () => {
+    const style = `${document.querySelector('#gridTemplateCode').value}`;
+    gridStyles.push(style)
+    document.querySelector('.grid').style = style;
+    gridCurrent = gridStyles.length - 1;
+  })
+
+  document.querySelector('#gridPrev').addEventListener('click', () => {
+    gridCurrent--;
+    const style = gridStyles[gridCurrent];
+    templateCode.value = style;
+    document.querySelector('.grid').style = style;
+  })
+
+  document.querySelector('#gridNext').addEventListener('click', () => {
+    gridCurrent++;
+    const style = gridStyles[gridCurrent];
+    templateCode.value = style;
+    document.querySelector('.grid').style = style;
+  })
+
+
+
+  let element;
+  document.querySelector('#form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    element = document.querySelector(document.querySelector('#selector').value)
+  })
+  document.querySelector('#gridItemCode').addEventListener('change', () => {
+    const style = document.querySelector('#gridItemCode').value;
+    itemStyles.push(style);
+    itemCurrent = itemStyles.length - 1;
+    element.style = style;
+  })
+  document.querySelector('#itemPrev').addEventListener('click', () => {
+    itemCurrent--;
+    const style = itemStyles[itemCurrent];
+    document.querySelector('#gridItemCode').value = style;
+    element.style = style;
+  })
+
+  document.querySelector('#itemNext').addEventListener('click', () => {
+    itemCurrent++;
+    const style = itemStyles[itemCurrent];
+    document.querySelector('#gridItemCode').value = style;
+    element.style = style;
+  })
+</script>
+</body>
+</html>
